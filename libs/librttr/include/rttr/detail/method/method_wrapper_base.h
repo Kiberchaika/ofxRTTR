@@ -29,7 +29,7 @@
 #define RTTR_METHOD_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/metadata/metadata_handler.h"
+#include "rttr/detail/metadata2/metadata_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/array_range.h"
@@ -45,6 +45,8 @@ namespace rttr
 class type;
 class argument;
 class instance;
+class method;
+class visitor;
 
 namespace detail
 {
@@ -86,6 +88,8 @@ class RTTR_API method_wrapper_base
                                argument& arg4, argument& arg5, argument& arg6) const;
 
         virtual variant invoke_variadic(const instance& object, std::vector<argument>& args) const;
+
+        virtual void visit(visitor& visitor, method m) const RTTR_NOEXCEPT;
     protected:
         void init() RTTR_NOEXCEPT;
     private:
