@@ -111,7 +111,7 @@ static void write_array_recursively(variant_sequential_view& view, Value& json_a
         }
         else
         {
-            const type array_type = view.get_rank_type(i);
+            const type array_type = view.get_value_type();
             variant extracted_value = extract_basic_types(json_index_value);
             if (extracted_value.convert(array_type))
                 view.set_value(i, extracted_value);
