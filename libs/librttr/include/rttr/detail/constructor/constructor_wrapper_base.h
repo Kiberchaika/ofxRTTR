@@ -29,7 +29,7 @@
 #define RTTR_CONSTRUCTOR_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/metadata2/metadata_handler.h"
+#include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/parameter_info.h"
 #include "rttr/access_levels.h"
 #include "rttr/array_range.h"

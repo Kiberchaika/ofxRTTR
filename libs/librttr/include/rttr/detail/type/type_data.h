@@ -42,7 +42,7 @@
 #include "rttr/property.h"
 #include "rttr/constructor.h"
 #include "rttr/destructor.h"
-#include "rttr/detail/metadata2/metadata.h"
+#include "rttr/detail/metadata/metadata.h"
 
 #include <type_traits>
 #include <bitset>

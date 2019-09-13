@@ -107,14 +107,15 @@ void ofApp::setup()
 		json_string = io::to_json(my_shape); // serialize the circle to 'json_string'
 	}
 
-	std::cout << "Circle: c_1:\n" << json_string << std::endl;
+    
+    ofLog() << "Circle: c_1:\n" << json_string << std::endl;
 
 	circle c_2("Circle #2"); // create a new empty circle
 
 	io::from_json(json_string, c_2); // deserialize it with the content of 'c_1'
-	std::cout << "\n############################################\n" << std::endl;
+	 ofLog() << "\n############################################\n" << std::endl;
 
-	std::cout << "Circle c_2:\n" << io::to_json(c_2) << std::endl;
+	 ofLog() << "Circle c_2:\n" << io::to_json(c_2) << std::endl;
 
 }
 

@@ -34,7 +34,7 @@
 #include "rttr/detail/destructor/destructor_wrapper.h"
 #include "rttr/detail/enumeration/enumeration_wrapper.h"
 #include "rttr/detail/enumeration/enum_data.h"
-#include "rttr/detail/metadata2/metadata.h"
+#include "rttr/detail/metadata/metadata.h"
 #include "rttr/detail/method/method_wrapper.h"
 #include "rttr/detail/parameter_info/parameter_infos.h"
 #include "rttr/detail/property/property_wrapper.h"

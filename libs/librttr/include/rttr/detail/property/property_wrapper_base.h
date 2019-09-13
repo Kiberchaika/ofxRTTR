@@ -29,7 +29,7 @@
 #define RTTR_PROPERTY_WRAPPER_BASE_H_
 
 #include "rttr/detail/base/core_prerequisites.h"
-#include "rttr/detail/metadata2/metadata_handler.h"
+#include "rttr/detail/metadata/metadata_handler.h"
 #include "rttr/type.h"
 #include "rttr/variant.h"
 #include "rttr/access_levels.h"
