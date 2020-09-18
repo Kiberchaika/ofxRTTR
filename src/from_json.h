@@ -28,6 +28,21 @@
 #include <string>
 #include <rttr/type>
 
+struct Variant {
+public:
+	rttr::variant v;
+	std::string type;
+	Variant() {
+	}
+	Variant(rttr::variant v) {
+		this->v = v;
+	}
+	Variant(rttr::variant v, std::string type) {
+		this->v = v;
+		this->type = type;
+	}
+};
+
 namespace io
 {
 /*!

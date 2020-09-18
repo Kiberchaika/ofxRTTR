@@ -34,7 +34,9 @@ namespace io
 /*!
  * Serialize the given instance to a json encoded string.
  */
-std::string to_json(rttr::instance obj);
+
+	size_t get_obj_properties_count(const rttr::instance& obj2);
+	std::string to_json(rttr::instance obj);
 
 }
 

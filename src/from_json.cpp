@@ -25,6 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
+#include "from_json.h"
+
 #include <cstdio>
 #include <string>
 #include <vector>
@@ -40,6 +42,16 @@
 using namespace rapidjson;
 using namespace rttr;
 
+#include <rttr/registration>
+
+RTTR_REGISTRATION
+{
+	registration::class_<Variant>("Variant")
+	.constructor<>()
+	.property("v", &Variant::v)
+	.property("type", &Variant::type)
+	;
+}
 
 namespace
 {
@@ -153,15 +165,27 @@ static void write_associative_view_recursively(variant_associative_view& view, V
             Value::MemberIterator key_itr = json_index_value.FindMember("key");
             Value::MemberIterator value_itr = json_index_value.FindMember("value");
 
+			std::string k  = key_itr->value.GetString();
+
             if (key_itr != json_index_value.MemberEnd() &&
                 value_itr != json_index_value.MemberEnd())
             {
-                auto key_var = extract_value(key_itr, view.get_key_type());
-                auto value_var = extract_value(value_itr, view.get_value_type());
-                if (key_var && value_var)
-                {
-                    view.insert(key_var, value_var);
-                }
+				if (view.get_value_type() == type::get<variant>()) {
+					auto key_var = extract_value(key_itr, view.get_key_type());
+					auto value_var = extract_basic_types(value_itr->value);
+					if (key_var && value_var)
+					{
+						view.insert(key_var, value_var);
+					}
+				}
+				else {
+					auto key_var = extract_value(key_itr, view.get_key_type());
+					auto value_var = extract_value(value_itr, view.get_value_type());
+					if (key_var && value_var)
+					{
+						view.insert(key_var, value_var);
+					}
+				}
             }
         }
         else // a key-only associative view
@@ -180,9 +204,24 @@ void fromjson_recursively(instance obj2, Value& json_object)
     instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
     const auto prop_list = obj.get_derived_type().get_properties();
 
+	auto t = obj.get_derived_type();
+	auto ttt3= t.get_raw_type();
+	auto  ttt = obj.get_type();
+	auto  ttt1 = obj.get_wrapped_instance();
+	bool w = t.is_wrapper();
+	auto f = t.get_id();
+	bool dd = t.is_valid();
+
     for (auto prop : prop_list)
     {
         Value::MemberIterator ret = json_object.FindMember(prop.get_name().data());
+
+		std::string nameX = prop.get_name().data();
+
+		if (nameX == "var") {
+			int c = 1;
+		}
+
         if (ret == json_object.MemberEnd())
             continue;
         const type value_t = prop.get_type();
@@ -206,6 +245,36 @@ void fromjson_recursively(instance obj2, Value& json_object)
                     write_associative_view_recursively(associative_view, json_value);
                 }
 
+				if (value_t == type::get<variant>()) {
+					var = prop.get_value(obj);
+					if (var.is_sequential_container())
+					{
+						auto view = var.create_sequential_view();
+						write_array_recursively(view, json_value);
+					}
+					else if (var.is_associative_container())
+					{
+						auto associative_view = var.create_associative_view();
+						write_associative_view_recursively(associative_view, json_value);
+					}
+					
+					/*
+					std::map<int, Variant> my_map = { { 1, Variant("one") }, { 2,  Variant("one") }, { 3,  Variant("one") } };
+					variant v2 = my_map;
+					variant_associative_view view = v2.create_associative_view(); // creates a view of the hold container in the variant (data is not copied!)
+					
+					
+					view.insert(variant(4), variant(Variant("two")));
+					view.insert(variant(5), Variant("three"));
+
+					
+					//auto t= view.get_value_type();
+
+					//view.begin() = 1;
+					var = v2;
+					*/
+				}
+
                 prop.set_value(obj, var);
                 break;
             }
@@ -219,9 +288,15 @@ void fromjson_recursively(instance obj2, Value& json_object)
             default:
             {
                 variant extracted_value = extract_basic_types(json_value);
-                if (extracted_value.convert(value_t)) // REMARK: CONVERSION WORKS ONLY WITH "const type", check whether this is correct or not!
-                    prop.set_value(obj, extracted_value);
-            }
+				
+				if (value_t == type::get<variant>()) {
+					prop.set_value(obj, extracted_value);
+				}
+				else if (extracted_value.convert(value_t)) {
+					// REMARK: CONVERSION WORKS ONLY WITH "const type", check whether this is correct or not!
+					prop.set_value(obj, extracted_value);
+				}
+			}
         }
     }
 }
@@ -241,7 +316,7 @@ bool from_json(const std::string& json, rttr::instance obj)
 
     // "normal" parsing, decode strings to new buffers. Can use other input stream via ParseStream().
     if (document.Parse(json.c_str()).HasParseError())
-        return 1;
+        return false;
 
     fromjson_recursively(obj, document);
 

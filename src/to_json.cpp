@@ -234,9 +234,12 @@ void to_json_recursively(const instance& obj2, PrettyWriter<StringBuffer>& write
         if (prop.get_metadata("NO_SERIALIZE"))
             continue;
 
-        variant prop_value = prop.get_value(obj);
-        if (!prop_value)
-            continue; // cannot serialize, because we cannot retrieve the value
+		const auto nameX = prop.get_name();
+
+		variant prop_value = prop.get_value(obj);
+		if (!prop_value) {
+			continue; // cannot serialize, because we cannot retrieve the value
+		}
 
         const auto name = prop.get_name();
         writer.String(name.data(), static_cast<rapidjson::SizeType>(name.length()), false);
@@ -257,6 +260,12 @@ void to_json_recursively(const instance& obj2, PrettyWriter<StringBuffer>& write
 
 namespace io
 {
+
+size_t get_obj_properties_count(const instance& obj2)
+{
+	instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+	return obj.get_derived_type().get_properties().size();
+}
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
